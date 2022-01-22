@@ -36,13 +36,15 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
 @Entity
 @EntityListeners(AuditingEntityListener::class)
@@ -51,15 +53,19 @@ data class User(
     @field:Id
     @field:GeneratedValue
     var id: Long? = null,
+    @field:NotEmpty(message = "{user.username.isEmpty}")
     @field:Column(nullable = false, unique = true, updatable = false)
     var username: String? = null,
     @field:Lob
     @field:Column(nullable = false)
     var password: String? = null,
+    @field:NotNull(message = "{user.enabled.isNull}")
     @field:Column(nullable = false)
     var enabled: Boolean? = null,
+    @field:NotNull(message = "{user.locked.isNull}")
     @field:Column(nullable = false)
     var locked: Boolean? = null,
+    @field:Size(message = "{user.roles.Size}", min = 1)
     @field:ManyToMany(fetch = FetchType.EAGER)
     var roles: MutableSet<Role> = mutableSetOf()
 ) {
@@ -89,12 +95,10 @@ interface UserRepository : JpaRepository<User, Long>
 interface RoleRepository : JpaRepository<Role, Long>
 
 interface UserService {
-    fun users(
-        probe: User,
-        pageable: Pageable
-    ): Page<User>
-
+    fun users(probe: User, pageable: Pageable): Page<User>
     fun user(id: Long): User
+    fun user(user: User): User
+    fun user(id: Long, user: User): User
 }
 
 @Service
@@ -117,6 +121,14 @@ class UserServiceImpl(
     override fun user(id: Long): User = userRepository.findById(id).orElseThrow {
         RuntimeException()
     }
+
+    override fun user(user: User): User = userRepository.save(user)
+
+    override fun user(id: Long, user: User): User = userRepository.findById(id).map {
+        userRepository.save(user)
+    }.orElseThrow {
+        RuntimeException()
+    }
 }
 
 @RestController
@@ -130,6 +142,14 @@ class UserHandler(
     @GetMapping("/user/{id}")
     fun user(@PathVariable("id") id: Long): User = userService.user(id)
 
+    @PostMapping("/user")
+    fun user(@RequestBody @Validated user: User): User = userService.user(user)
+
+    @PutMapping("/user/{id}")
+    fun user(
+        @PathVariable("id") id: Long,
+        @RequestBody @Validated user: User
+    ): User = userService.user(id, user)
 }
 
 data class UserDetailsImpl(
