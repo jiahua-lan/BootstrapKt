@@ -10,11 +10,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.domain.Example
-import org.springframework.data.domain.ExampleMatcher
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.domain.*
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -27,6 +28,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.CredentialsContainer
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -38,9 +40,12 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
+import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.*
 
 @Entity
+@EntityListeners(AuditingEntityListener::class)
 @Table(name = "sys_user")
 data class User(
     @field:Id
@@ -57,7 +62,13 @@ data class User(
     var locked: Boolean? = null,
     @field:ManyToMany(fetch = FetchType.EAGER)
     var roles: MutableSet<Role> = mutableSetOf()
-)
+) {
+    @field:CreatedDate
+    var createdDate: LocalDateTime? = null
+
+    @field:LastModifiedDate
+    var lastModifiedDate: LocalDateTime? = null
+}
 
 @Entity
 @Table(name = "sys_role")
@@ -165,9 +176,21 @@ class UserDetailsServiceImpl(
 }
 
 @Configuration
+@EnableJpaAuditing(auditorAwareRef = "auditor")
 class SecurityConfigurations {
     @Bean
     fun encoder(): PasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
+
+    @Bean
+    fun auditor(): AuditorAware<User> = AuditorAware {
+        Optional.ofNullable(SecurityContextHolder.getContext())
+            .map { it.authentication }
+            .filter { it.isAuthenticated }
+            .map { it.principal }
+            .filter { it is UserDetailsImpl }
+            .map { it as UserDetailsImpl }
+            .map { User(id = it.id) }
+    }
 }
 
 @EnableWebSecurity
