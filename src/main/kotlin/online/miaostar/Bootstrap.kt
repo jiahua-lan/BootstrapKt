@@ -1,4 +1,4 @@
-package online.miaostar.demo
+package online.miaostar
 
 import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
