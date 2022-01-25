@@ -34,6 +34,7 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -225,7 +226,7 @@ class WebSecurityConfigurations(
         http.cors {
             it.disable()
         }.csrf {
-            it.disable()
+            it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
         }.formLogin {
             it.successHandler { _, response, _ ->
                 response.apply {
