@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import online.miaostar.UserService.Companion.ROOT_ROLE
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -96,6 +97,11 @@ interface UserRepository : JpaRepository<User, Long>
 interface RoleRepository : JpaRepository<Role, Long>
 
 interface UserService {
+    companion object {
+        const val USER_ROLE = "USER"
+        const val ROOT_ROLE = "ROOT"
+    }
+
     fun users(probe: User, pageable: Pageable): Page<User>
     fun user(id: Long): User
     fun user(user: User): User
@@ -137,15 +143,18 @@ class UserHandler(
     private val userService: UserService
 ) {
 
+    @PreAuthorize("hasRole('${ROOT_ROLE}')")
     @GetMapping("/users")
     fun users(probe: User, pageable: Pageable): Page<User> = userService.users(probe, pageable)
 
+    @PreAuthorize("hasRole('${ROOT_ROLE}')")
     @GetMapping("/user/{id}")
     fun user(@PathVariable("id") id: Long): User = userService.user(id)
 
     @PostMapping("/user")
     fun user(@RequestBody @Validated user: User): User = userService.user(user)
 
+    @PreAuthorize("hasRole('${ROOT_ROLE}')")
     @PutMapping("/user/{id}")
     fun user(
         @PathVariable("id") id: Long,
