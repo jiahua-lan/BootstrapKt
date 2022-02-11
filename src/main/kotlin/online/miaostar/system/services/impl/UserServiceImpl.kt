@@ -57,10 +57,19 @@ class UserServiceImpl(
     @EventListener(RoleEntryEvent::class)
     fun handle(event: RoleEntryEvent) {
         event.code.takeUnless {
-            roleRepository.exists(Example.of(Role(code = it)))
+            roleRepository.exists(
+                Example.of(
+                    Role(
+                        code = it
+                    )
+                )
+            )
         }?.let {
             roleRepository.save(
-                Role(code = it, name = it)
+                Role(
+                    code = it,
+                    name = it
+                )
             )
         }
     }
