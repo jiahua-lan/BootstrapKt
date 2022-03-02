@@ -16,7 +16,10 @@ class UserHandler(
 
     @PreAuthorize("hasRole('${ROOT_ROLE}')")
     @GetMapping("/users")
-    fun users(probe: User, pageable: Pageable): Page<User> = userService.users(probe, pageable)
+    fun users(
+        probe: User,
+        pageable: Pageable
+    ): Page<User> = userService.users(probe, pageable)
 
     @PreAuthorize("hasRole('${ROOT_ROLE}')")
     @GetMapping("/user/{id}")
@@ -28,6 +31,7 @@ class UserHandler(
     @PreAuthorize("hasRole('${ROOT_ROLE}')")
     @PutMapping("/user/{id}")
     fun user(
-        @PathVariable("id") id: Long, @RequestBody @Validated user: User
+        @PathVariable("id") id: Long,
+        @RequestBody @Validated user: User
     ): User = userService.user(id, user)
 }
