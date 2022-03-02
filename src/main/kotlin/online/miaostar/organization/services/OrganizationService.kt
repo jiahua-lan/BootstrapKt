@@ -14,10 +14,13 @@ interface OrganizationService {
 
     fun create(organization: Organization): Organization
     fun organization(id: Long): Organization
+    fun modify(id: Long, organization: Organization): Organization
 
     fun create(member: Member): Member
     fun member(id: Long): Member
+    fun modify(id: Long, member: Member): Member
 
     fun create(position: Position): Position
     fun position(id: Long): Position
+    fun modify(id: Long, position: Position): Position
 }

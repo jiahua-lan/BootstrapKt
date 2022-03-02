@@ -35,15 +35,39 @@ class OrganizationServiceImpl(
         RuntimeException()
     }
 
+    override fun modify(
+        id: Long,
+        organization: Organization
+    ): Organization = organizationRepository.findById(id).map {
+        organizationRepository.save(organization)
+    }.orElseThrow {
+        RuntimeException()
+    }
+
     override fun create(member: Member): Member = memberRepository.save(member)
 
     override fun member(id: Long): Member = memberRepository.findById(id).orElseThrow {
         RuntimeException()
     }
 
+    override fun modify(id: Long, member: Member): Member = memberRepository.findById(id).map {
+        memberRepository.save(member)
+    }.orElseThrow {
+        RuntimeException()
+    }
+
     override fun create(position: Position): Position = positionRepository.save(position)
 
     override fun position(id: Long): Position = positionRepository.findById(id).orElseThrow {
+        RuntimeException()
+    }
+
+    override fun modify(
+        id: Long,
+        position: Position
+    ): Position = positionRepository.findById(id).map {
+        positionRepository.save(position)
+    }.orElseThrow {
         RuntimeException()
     }
 
