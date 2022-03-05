@@ -5,6 +5,9 @@ import online.miaostar.organization.entities.Organization
 import online.miaostar.organization.entities.OrganizationType
 import online.miaostar.organization.entities.Position
 import online.miaostar.organization.event.OrganizationTypeEntryEvent
+import online.miaostar.organization.exception.MemberNotFoundException
+import online.miaostar.organization.exception.OrganizationNotFoundException
+import online.miaostar.organization.exception.PositionNotFoundException
 import online.miaostar.organization.repositories.MemberRepository
 import online.miaostar.organization.repositories.OrganizationRepository
 import online.miaostar.organization.repositories.OrganizationTypeRepository
@@ -32,7 +35,7 @@ class OrganizationServiceImpl(
     override fun create(organization: Organization): Organization = organizationRepository.save(organization)
 
     override fun organization(id: Long): Organization = organizationRepository.findById(id).orElseThrow {
-        RuntimeException()
+        OrganizationNotFoundException(id)
     }
 
     override fun modify(
@@ -41,25 +44,25 @@ class OrganizationServiceImpl(
     ): Organization = organizationRepository.findById(id).map {
         organizationRepository.save(organization)
     }.orElseThrow {
-        RuntimeException()
+        OrganizationNotFoundException(id)
     }
 
     override fun create(member: Member): Member = memberRepository.save(member)
 
     override fun member(id: Long): Member = memberRepository.findById(id).orElseThrow {
-        RuntimeException()
+        MemberNotFoundException(id)
     }
 
     override fun modify(id: Long, member: Member): Member = memberRepository.findById(id).map {
         memberRepository.save(member)
     }.orElseThrow {
-        RuntimeException()
+        MemberNotFoundException(id)
     }
 
     override fun create(position: Position): Position = positionRepository.save(position)
 
     override fun position(id: Long): Position = positionRepository.findById(id).orElseThrow {
-        RuntimeException()
+        PositionNotFoundException(id)
     }
 
     override fun modify(
@@ -68,7 +71,7 @@ class OrganizationServiceImpl(
     ): Position = positionRepository.findById(id).map {
         positionRepository.save(position)
     }.orElseThrow {
-        RuntimeException()
+        PositionNotFoundException(id)
     }
 
     @EventListener(OrganizationTypeEntryEvent::class)

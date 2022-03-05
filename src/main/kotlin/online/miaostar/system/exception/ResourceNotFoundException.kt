@@ -1,6 +1,6 @@
 package online.miaostar.system.exception
 
-data class ResourceNotFoundException(
-    override var code: String = "resource.not.found.exception",
-    override var args: MutableList<Any> = mutableListOf()
+open class ResourceNotFoundException(
+    override val code: String = "resource.not.found.exception",
+    override val args: List<Any> = listOf()
 ) : SystemException(code, args)

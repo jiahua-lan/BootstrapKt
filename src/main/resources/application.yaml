@@ -6,3 +6,10 @@ spring:
       ddl-auto: update
     show-sql: true
     open-in-view: true
+oss:
+  minio:
+    bucket: bootstrap
+    credentials:
+      access-key: jiahua-lan
+      secret-key: ZxC3177468
+    endpoint: http://127.0.0.1:9000
