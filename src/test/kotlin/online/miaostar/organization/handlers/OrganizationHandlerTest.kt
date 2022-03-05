@@ -11,6 +11,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 
 @SpringBootTest
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
@@ -21,7 +22,7 @@ internal class OrganizationHandlerTest {
 
     @Test
     @WithUserDetails(value = "mike")
-    fun organization() {
+    fun `create organization`() {
         mock.post("/organization") {
             contentType = MediaType.APPLICATION_JSON
             content = """
@@ -45,6 +46,30 @@ internal class OrganizationHandlerTest {
     }
 
     @Test
+    @WithUserDetails(value = "mike")
+    fun `modify organization`() {
+        mock.put("/organization/{id}", 30) {
+            contentType = MediaType.APPLICATION_JSON
+            content = """
+                {
+                    "id": 30,
+                    "code": "MAIN_STORE",
+                    "name": "MAIN_STORE_M",
+                    "type": { "id": 20 },
+                    "creator": { "id": 1 }
+                }
+            """.trimIndent()
+            with(csrf())
+        }.andDo {
+            log()
+        }.andExpect {
+            status {
+                isOk()
+            }
+        }
+    }
+
+    @Test
     fun `get organization`() {
         mock.get("/organization/{id}", 30) {
             with(csrf())
@@ -58,8 +83,21 @@ internal class OrganizationHandlerTest {
     }
 
     @Test
+    fun `get organizations`() {
+        mock.get("/organizations") {
+            with(csrf())
+        }.andDo {
+            log()
+        }.andExpect {
+            status {
+                isOk()
+            }
+        }
+    }
+
+    @Test
     @WithUserDetails(value = "mike")
-    fun member() {
+    fun `create member`() {
         mock.post("/organization/member") {
             contentType = MediaType.APPLICATION_JSON
             content = """
@@ -72,6 +110,29 @@ internal class OrganizationHandlerTest {
                     "positions": [
                         { "id": 41 }
                     ]
+                }
+            """.trimIndent()
+            with(csrf())
+        }.andDo {
+            log()
+        }.andExpect {
+            status {
+                isOk()
+            }
+        }
+    }
+
+    @Test
+    @WithUserDetails(value = "mike")
+    fun `modify member`() {
+        mock.put("/organization/member/{id}", 50) {
+            contentType = MediaType.APPLICATION_JSON
+            content = """
+                {
+                    "id": 50,
+                    "code": "EMPLOYEE_01",
+                    "name": "CAT_M",
+                    "account": { "id": 1 }
                 }
             """.trimIndent()
             with(csrf())

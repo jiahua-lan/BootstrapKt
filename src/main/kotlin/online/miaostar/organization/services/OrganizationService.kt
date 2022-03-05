@@ -3,6 +3,8 @@ package online.miaostar.organization.services
 import online.miaostar.organization.entities.Member
 import online.miaostar.organization.entities.Organization
 import online.miaostar.organization.entities.Position
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 interface OrganizationService {
 
@@ -15,6 +17,7 @@ interface OrganizationService {
     fun create(organization: Organization): Organization
     fun organization(id: Long): Organization
     fun modify(id: Long, organization: Organization): Organization
+    fun organizations(organization: Organization, pageable: Pageable): Page<Organization>
 
     fun create(member: Member): Member
     fun member(id: Long): Member

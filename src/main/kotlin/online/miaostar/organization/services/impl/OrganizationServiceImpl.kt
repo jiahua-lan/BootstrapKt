@@ -20,6 +20,8 @@ import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.ExampleMatcher
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -46,6 +48,17 @@ class OrganizationServiceImpl(
     }.orElseThrow {
         OrganizationNotFoundException(id)
     }
+
+    override fun organizations(
+        organization: Organization,
+        pageable: Pageable
+    ): Page<Organization> = organizationRepository.findAll(
+        Example.of(
+            organization,
+            ExampleMatcher.matching().withIgnoreNullValues()
+        ),
+        pageable
+    )
 
     override fun create(member: Member): Member = memberRepository.save(member)
 

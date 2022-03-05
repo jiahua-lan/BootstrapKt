@@ -34,7 +34,10 @@ class OrganizationHandler(
     ): Organization = organizationService.organization(id)
 
     @GetMapping("/organizations")
-    fun organization(probe: Organization, pageable: Pageable): Page<Organization> = Page.empty(pageable)
+    fun organization(probe: Organization, pageable: Pageable): Page<Organization> = organizationService.organizations(
+        probe,
+        pageable
+    )
 
     @PreAuthorize("hasRole('${OrganizationService.MEMBER_MANAGER_ROLE}')")
     @PostMapping("/organization/member")
