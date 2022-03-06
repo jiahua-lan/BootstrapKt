@@ -4,6 +4,9 @@ import online.miaostar.organization.entities.Member
 import online.miaostar.organization.entities.Organization
 import online.miaostar.organization.entities.Position
 import online.miaostar.organization.services.OrganizationService
+import online.miaostar.organization.services.OrganizationService.Companion.MEMBER_MANAGER_ROLE
+import online.miaostar.organization.services.OrganizationService.Companion.ORGANIZATION_MANAGER_ROLE
+import online.miaostar.organization.services.OrganizationService.Companion.POSITION_MANAGER_ROLE
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
@@ -15,13 +18,13 @@ class OrganizationHandler(
     private val organizationService: OrganizationService
 ) {
 
-    @PreAuthorize("hasRole('${OrganizationService.ORGANIZATION_MANAGER_ROLE}')")
+    @PreAuthorize("hasRole('${ORGANIZATION_MANAGER_ROLE}')")
     @PostMapping("/organization")
     fun organization(
         @RequestBody @Validated organization: Organization
     ): Organization = organizationService.create(organization)
 
-    @PreAuthorize("hasRole('${OrganizationService.ORGANIZATION_MANAGER_ROLE}')")
+    @PreAuthorize("hasRole('${ORGANIZATION_MANAGER_ROLE}')")
     @PutMapping("/organization/{id}")
     fun organization(
         @PathVariable("id") id: Long,
@@ -39,13 +42,13 @@ class OrganizationHandler(
         pageable
     )
 
-    @PreAuthorize("hasRole('${OrganizationService.MEMBER_MANAGER_ROLE}')")
+    @PreAuthorize("hasRole('${MEMBER_MANAGER_ROLE}')")
     @PostMapping("/organization/member")
     fun member(
         @RequestBody @Validated member: Member
     ): Member = organizationService.create(member)
 
-    @PreAuthorize("hasRole('${OrganizationService.MEMBER_MANAGER_ROLE}')")
+    @PreAuthorize("hasRole('${MEMBER_MANAGER_ROLE}')")
     @PutMapping("/organization/member/{id}")
     fun member(
         @PathVariable("id") id: Long,
@@ -55,14 +58,14 @@ class OrganizationHandler(
     @GetMapping("/organization/member/{id}")
     fun member(@PathVariable("id") id: Long): Member = organizationService.member(id)
 
-    @PreAuthorize("hasRole('${OrganizationService.POSITION_MANAGER_ROLE}')")
+    @PreAuthorize("hasRole('${POSITION_MANAGER_ROLE}')")
     @PostMapping("/organization/position")
     fun position(
         @RequestBody @Validated position: Position
     ): Position = organizationService.create(position)
 
-    @PreAuthorize("hasRole('${OrganizationService.POSITION_MANAGER_ROLE}')")
-    @PostMapping("/organization/position/{id}")
+    @PreAuthorize("hasRole('${POSITION_MANAGER_ROLE}')")
+    @PutMapping("/organization/position/{id}")
     fun position(
         @PathVariable("id") id: Long,
         @RequestBody @Validated position: Position
@@ -70,5 +73,14 @@ class OrganizationHandler(
 
     @GetMapping("/organization/position/{id}")
     fun position(@PathVariable("id") id: Long): Position = organizationService.position(id)
+
+    @GetMapping("/organization/{organizationId}/positions")
+    fun positions(
+        @PathVariable("organizationId") id: Long,
+        probe: Position,
+        pageable: Pageable
+    ): Page<Position> = organizationService.positions(probe.apply {
+        this.organization = Organization(id = id)
+    }, pageable)
 
 }

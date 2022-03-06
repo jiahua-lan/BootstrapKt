@@ -190,4 +190,41 @@ internal class OrganizationHandlerTest {
             }
         }
     }
+
+    @Test
+    @WithUserDetails(value = "mike")
+    fun `modify position`() {
+        mock.put("/organization/position/{id}", 40) {
+            contentType = MediaType.APPLICATION_JSON
+            content = """
+                {
+                    "id": 40,
+                    "code": "STORE_MANAGER",
+                    "name": "STORE_MANAGER_M",
+                    "organization": { "id": 30 }
+                }
+            """.trimIndent()
+            with(csrf())
+        }.andDo {
+            log()
+        }.andExpect {
+            status {
+                isOk()
+            }
+        }
+    }
+
+    @Test
+    fun `get positions`() {
+        mock.get("/organization/{organizationId}/positions", 30) {
+            with(csrf())
+        }.andDo {
+            log()
+        }.andExpect {
+            status {
+                isOk()
+            }
+        }
+    }
+
 }

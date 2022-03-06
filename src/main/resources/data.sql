@@ -43,7 +43,7 @@ insert into position (id, code, name, organization_id)
 values (40, 'STORE_MANAGER', 'STORE_MANAGER', 30);
 
 insert into position (id, code, name, organization_id)
-values (41, 'STORE_STAFF', 'STORE_MANAGER', 30);
+values (41, 'STORE_STAFF', 'STORE_STAFF', 30);
 
 insert into position (id, code, name, organization_id)
 values (42, 'SHOP_ASSISTANT', 'SHOP_ASSISTANT', 30);

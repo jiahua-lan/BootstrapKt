@@ -26,4 +26,5 @@ interface OrganizationService {
     fun create(position: Position): Position
     fun position(id: Long): Position
     fun modify(id: Long, position: Position): Position
+    fun positions(probe: Position, pageable: Pageable): Page<Position>
 }

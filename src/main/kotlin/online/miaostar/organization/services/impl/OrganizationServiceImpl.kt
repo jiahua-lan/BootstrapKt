@@ -13,6 +13,9 @@ import online.miaostar.organization.repositories.OrganizationRepository
 import online.miaostar.organization.repositories.OrganizationTypeRepository
 import online.miaostar.organization.repositories.PositionRepository
 import online.miaostar.organization.services.OrganizationService
+import online.miaostar.organization.services.OrganizationService.Companion.MEMBER_MANAGER_ROLE
+import online.miaostar.organization.services.OrganizationService.Companion.ORGANIZATION_MANAGER_ROLE
+import online.miaostar.organization.services.OrganizationService.Companion.POSITION_MANAGER_ROLE
 import online.miaostar.system.event.RoleEntryEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.ApplicationEventPublisherAware
@@ -34,9 +37,13 @@ class OrganizationServiceImpl(
     private val positionRepository: PositionRepository
 ) : OrganizationService, ApplicationEventPublisherAware {
 
-    override fun create(organization: Organization): Organization = organizationRepository.save(organization)
+    override fun create(
+        organization: Organization
+    ): Organization = organizationRepository.save(organization)
 
-    override fun organization(id: Long): Organization = organizationRepository.findById(id).orElseThrow {
+    override fun organization(
+        id: Long
+    ): Organization = organizationRepository.findById(id).orElseThrow {
         OrganizationNotFoundException(id)
     }
 
@@ -60,21 +67,32 @@ class OrganizationServiceImpl(
         pageable
     )
 
-    override fun create(member: Member): Member = memberRepository.save(member)
+    override fun create(
+        member: Member
+    ): Member = memberRepository.save(member)
 
-    override fun member(id: Long): Member = memberRepository.findById(id).orElseThrow {
+    override fun member(
+        id: Long
+    ): Member = memberRepository.findById(id).orElseThrow {
         MemberNotFoundException(id)
     }
 
-    override fun modify(id: Long, member: Member): Member = memberRepository.findById(id).map {
+    override fun modify(
+        id: Long,
+        member: Member
+    ): Member = memberRepository.findById(id).map {
         memberRepository.save(member)
     }.orElseThrow {
         MemberNotFoundException(id)
     }
 
-    override fun create(position: Position): Position = positionRepository.save(position)
+    override fun create(
+        position: Position
+    ): Position = positionRepository.save(position)
 
-    override fun position(id: Long): Position = positionRepository.findById(id).orElseThrow {
+    override fun position(
+        id: Long
+    ): Position = positionRepository.findById(id).orElseThrow {
         PositionNotFoundException(id)
     }
 
@@ -86,6 +104,17 @@ class OrganizationServiceImpl(
     }.orElseThrow {
         PositionNotFoundException(id)
     }
+
+    override fun positions(
+        probe: Position,
+        pageable: Pageable
+    ): Page<Position> = positionRepository.findAll(
+        Example.of(
+            probe,
+            ExampleMatcher.matching()
+        ),
+        pageable
+    )
 
     @EventListener(OrganizationTypeEntryEvent::class)
     fun handle(event: OrganizationTypeEntryEvent) {
@@ -109,9 +138,9 @@ class OrganizationServiceImpl(
     @EventListener(ContextRefreshedEvent::class)
     fun handle(event: ContextRefreshedEvent) {
         arrayOf(
-            OrganizationService.ORGANIZATION_MANAGER_ROLE,
-            OrganizationService.MEMBER_MANAGER_ROLE,
-            OrganizationService.MEMBER_MANAGER_ROLE
+            ORGANIZATION_MANAGER_ROLE,
+            MEMBER_MANAGER_ROLE,
+            POSITION_MANAGER_ROLE
         ).forEach {
             publisher.publishEvent(
                 RoleEntryEvent(code = it)
