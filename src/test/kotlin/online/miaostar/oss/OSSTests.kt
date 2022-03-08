@@ -1,20 +1,22 @@
 package online.miaostar.oss
 
-import io.minio.BucketExistsArgs
-import io.minio.MakeBucketArgs
-import io.minio.MinioClient
-import io.minio.UploadObjectArgs
-import online.miaostar.oss.minio.MinioConfigurationProperties
+import io.minio.*
+import online.miaostar.storage.configuration.StorageConfigurationProperties
+import online.miaostar.storage.minio.configuration.MinioConfigurationProperties
 import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.io.File
 
 @SpringBootTest
 class OSSTests {
     @field:Autowired
     private lateinit var properties: MinioConfigurationProperties
+
+    @field:Autowired
+    private lateinit var storage: StorageConfigurationProperties
 
     private val logger: Logger = LoggerFactory.getLogger("oss")
 
@@ -51,7 +53,7 @@ class OSSTests {
     }
 
     @Test
-    fun `put object`() {
+    fun `upload object`() {
         val client: MinioClient = MinioClient.builder()
             .endpoint(properties.endpoint)
             .credentials(properties.credentials.accessKey, properties.credentials.secretKey)
@@ -65,6 +67,27 @@ class OSSTests {
                 .build()
         )
 
+    }
+
+    @Test
+    fun `put object`() {
+        val client: MinioClient = MinioClient.builder()
+            .endpoint(properties.endpoint)
+            .credentials(properties.credentials.accessKey, properties.credentials.secretKey)
+            .build()
+
+        client.putObject(
+            PutObjectArgs.builder()
+
+                .build()
+        )
+    }
+
+    @Test
+    fun save() {
+        File.createTempFile("hello", ".txt").apply {
+            logger.info("path: {}", this.path)
+        }
     }
 
 

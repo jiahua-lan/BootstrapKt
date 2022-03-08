@@ -7,6 +7,8 @@ spring:
     show-sql: true
     open-in-view: true
 oss:
+  prefix: http://127.0.0.1:9000/${oss.minio.bucket}/
+  strategy: minio
   minio:
     bucket: bootstrap
     credentials:

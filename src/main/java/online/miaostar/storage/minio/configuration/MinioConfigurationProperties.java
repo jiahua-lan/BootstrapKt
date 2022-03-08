@@ -1,11 +1,18 @@
-package online.miaostar.oss.minio;
+package online.miaostar.storage.minio.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+@ConditionalOnProperty(prefix = "oss", name = "strategy",havingValue = "MINIO")
 @Configuration
 @ConfigurationProperties("oss.minio")
-public class MinioConfigurationProperties {
+public class MinioConfigurationProperties implements InitializingBean {
+
+    private final Logger logger = LoggerFactory.getLogger("oss.minio");
 
     private String endpoint;
 
@@ -37,7 +44,14 @@ public class MinioConfigurationProperties {
         this.credentials = credentials;
     }
 
-    public static class Credentials{
+    @Override
+    public void afterPropertiesSet() {
+        logger.info("\n" +
+                "endpoint: {}\n" +
+                "bucket: {}\n", endpoint, bucket);
+    }
+
+    public static class Credentials {
         private String accessKey;
         private String secretKey;
 

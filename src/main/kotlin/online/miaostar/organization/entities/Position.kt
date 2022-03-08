@@ -19,6 +19,7 @@ data class Position(
     var name: String? = null,
     @field:NotNull(message = "{position.organization.isNull}")
     @field:ManyToOne(optional = false)
+    @field:JoinColumn(updatable = false)
     var organization: Organization? = null
 ) {
     @field:ManyToMany(mappedBy = "positions")

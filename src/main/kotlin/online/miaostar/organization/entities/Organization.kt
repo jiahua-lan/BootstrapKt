@@ -23,6 +23,7 @@ data class Organization(
     var name: String? = null,
     @field:NotNull(message = "{organization.type.isNull}")
     @field:ManyToOne(optional = false)
+    @field:JoinColumn(updatable = false)
     var type: OrganizationType? = null
 ) {
     @field:OneToMany(mappedBy = "organization")
