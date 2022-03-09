@@ -7,10 +7,7 @@ import online.miaostar.storage.services.ObjectStorageService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.io.InputStream
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
+import org.springframework.web.multipart.MultipartFile
 
 @ConditionalOnProperty(prefix = "oss", value = ["strategy"], havingValue = "DATABASE")
 @Service
@@ -21,13 +18,8 @@ class ObjectStorageServiceImpl(
     private val properties: DatabaseStorageConfigurationProperties
 ) : ObjectStorageService {
 
-    fun save(stream: InputStream): String {
-        val format = LocalDateTime.now().format(
-            DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.getDefault())
-        )
-        return "${storage.prefix}"
+    override fun putObject(file: MultipartFile): String {
+        TODO("Not yet implemented")
     }
-
-    fun remove(path: String) {}
 
 }

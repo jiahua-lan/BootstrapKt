@@ -8,6 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import java.io.File
 
 @SpringBootTest
@@ -76,11 +77,21 @@ class OSSTests {
             .credentials(properties.credentials.accessKey, properties.credentials.secretKey)
             .build()
 
+        val stream = Thread.currentThread().contextClassLoader.getResourceAsStream("cat-1.png")
+
         client.putObject(
             PutObjectArgs.builder()
-
+                .`object`("cat.png")
+                .contentType(MediaType.IMAGE_PNG_VALUE)
+                .bucket(properties.bucket)
+                .stream(stream, stream.available().toLong(), -1)
                 .build()
-        )
+        ).apply {
+            logger.info("""
+                object: {}
+                version: {}
+            """.trimIndent(), this.`object`(), this.versionId())
+        }
     }
 
     @Test
