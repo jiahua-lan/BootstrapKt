@@ -37,6 +37,14 @@ class OrganizationServiceImpl(
     private val positionRepository: PositionRepository
 ) : OrganizationService, ApplicationEventPublisherAware {
 
+    override fun types(
+        probe: OrganizationType,
+        pageable: Pageable
+    ): Page<OrganizationType> = organizationTypeRepository.findAll(
+        Example.of(probe, ExampleMatcher.matching().withIgnoreNullValues()),
+        pageable
+    )
+
     override fun create(
         organization: Organization
     ): Organization = organizationRepository.save(organization)

@@ -1,5 +1,6 @@
 package online.miaostar.system.services
 
+import online.miaostar.system.entities.Role
 import online.miaostar.system.entities.User
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -18,5 +19,7 @@ interface UserService {
     fun user(id: Long): User
     fun user(user: User): User
     fun user(id: Long, user: User): User
+
+    fun roles(probe: Role): Page<Role>
 }
 

@@ -28,6 +28,11 @@ class UserServiceImpl(
     private val utils: PasswordEncoderUtils
 ) : UserService, ApplicationEventPublisherAware {
 
+    override fun roles(probe: Role): Page<Role> = roleRepository.findAll(
+        Example.of(probe),
+        Pageable.unpaged()
+    )
+
     override fun users(
         probe: User, pageable: Pageable
     ): Page<User> = userRepository.findAll(

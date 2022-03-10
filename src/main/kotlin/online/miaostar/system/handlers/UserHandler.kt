@@ -1,5 +1,6 @@
 package online.miaostar.system.handlers
 
+import online.miaostar.system.entities.Role
 import online.miaostar.system.entities.User
 import online.miaostar.system.services.UserService
 import online.miaostar.system.services.UserService.Companion.ROOT_ROLE
@@ -34,4 +35,8 @@ class UserHandler(
         @PathVariable("id") id: Long,
         @RequestBody @Validated user: User
     ): User = userService.user(id, user)
+
+    @GetMapping("/roles")
+    fun roles(probe: Role): Page<Role> = userService.roles(probe)
+
 }

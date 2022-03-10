@@ -2,6 +2,7 @@ package online.miaostar.organization.handlers
 
 import online.miaostar.organization.entities.Member
 import online.miaostar.organization.entities.Organization
+import online.miaostar.organization.entities.OrganizationType
 import online.miaostar.organization.entities.Position
 import online.miaostar.organization.services.OrganizationService
 import online.miaostar.organization.services.OrganizationService.Companion.MEMBER_MANAGER_ROLE
@@ -17,6 +18,14 @@ import org.springframework.web.bind.annotation.*
 class OrganizationHandler(
     private val organizationService: OrganizationService
 ) {
+
+    @GetMapping("/organization/types")
+    fun types(
+        probe: OrganizationType
+    ): Page<OrganizationType> = organizationService.types(
+        probe,
+        Pageable.unpaged()
+    )
 
     @PreAuthorize("hasRole('${ORGANIZATION_MANAGER_ROLE}')")
     @PostMapping("/organization")
