@@ -46,7 +46,10 @@ class OrganizationHandler(
     ): Organization = organizationService.organization(id)
 
     @GetMapping("/organizations")
-    fun organization(probe: Organization, pageable: Pageable): Page<Organization> = organizationService.organizations(
+    fun organization(
+        probe: Organization,
+        pageable: Pageable
+    ): Page<Organization> = organizationService.organizations(
         probe,
         pageable
     )
@@ -88,8 +91,11 @@ class OrganizationHandler(
         @PathVariable("organizationId") id: Long,
         probe: Position,
         pageable: Pageable
-    ): Page<Position> = organizationService.positions(probe.apply {
-        this.organization = Organization(id = id)
-    }, pageable)
+    ): Page<Position> = organizationService.positions(
+        probe.apply {
+            this.organization = Organization(id = id)
+        },
+        pageable
+    )
 
 }

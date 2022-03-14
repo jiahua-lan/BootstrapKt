@@ -54,11 +54,11 @@ internal class UserHandlerTest {
         mock.post("/user") {
             contentType = MediaType.APPLICATION_JSON
             content = """{ 
-                 "username" : "NEW",
-                "enabled" : true,
-                "locked" : false,
-                "roles" : [{"id": 2}],
-                "credential": { "credential": "987654321" }
+                    "username" : "NEW",
+                    "enabled" : true,
+                    "locked" : false,
+                    "roles" : [{"id": 2}],
+                    "credential": { "credential": "987654321" }
                  }""".trimMargin()
             with(csrf())
         }.andDo {

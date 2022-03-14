@@ -36,7 +36,7 @@ public class StorageConfigurationProperties implements InitializingBean {
     public void afterPropertiesSet() {
         logger.info("\n" +
                 "prefix: {}\n" +
-                "strategy: {}", prefix, strategy);
+                "strategy: {}\n", prefix, strategy);
     }
 
     public enum Strategy {
