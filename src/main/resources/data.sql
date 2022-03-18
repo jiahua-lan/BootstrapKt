@@ -33,25 +33,4 @@ values (5, 13);
 insert into sys_user_roles (users_id, roles_id)
 values (5, 14);
 
-insert into organization_type(id, code, name)
-values (20, 'SHOP', 'SHOP');
-
-insert into organization(id, code, name, type_id, creator_id, created_date)
-values (30, 'MAIN_STORE', 'MAIN_STORE', 20, 1, current_timestamp());
-
-insert into position (id, code, name, organization_id)
-values (40, 'STORE_MANAGER', 'STORE_MANAGER', 30);
-
-insert into position (id, code, name, organization_id)
-values (41, 'STORE_STAFF', 'STORE_STAFF', 30);
-
-insert into position (id, code, name, organization_id)
-values (42, 'SHOP_ASSISTANT', 'SHOP_ASSISTANT', 30);
-
-insert into member(id, code, name, account_id)
-values (50, 'EMPLOYEE_01', 'CAT', 1);
-
-insert into member_positions (members_id, positions_id)
-values (50, 40);
-
 alter sequence hibernate_sequence restart with 1000;

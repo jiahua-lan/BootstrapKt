@@ -4,6 +4,7 @@ import online.miaostar.security.services.PasswordEncoderUtils
 import online.miaostar.system.entities.Role
 import online.miaostar.system.entities.User
 import online.miaostar.system.event.RoleEntryEvent
+import online.miaostar.system.exception.UserNotFoundException
 import online.miaostar.system.repositories.RoleRepository
 import online.miaostar.system.repositories.UserCredentialRepository
 import online.miaostar.system.repositories.UserRepository
@@ -41,9 +42,11 @@ class UserServiceImpl(
         ), pageable
     )
 
-    override fun user(id: Long): User = userRepository.findById(id).orElseThrow {
-        RuntimeException()
-    }
+    override fun user(id: Long): User = userRepository
+        .findById(id)
+        .orElseThrow {
+            UserNotFoundException(id)
+        }
 
     override fun user(user: User): User = userRepository.save(user).let {
         userCredentialRepository.save(it.credential!!.apply {
@@ -56,7 +59,7 @@ class UserServiceImpl(
     override fun user(id: Long, user: User): User = userRepository.findById(id).map {
         userRepository.save(user)
     }.orElseThrow {
-        RuntimeException()
+        UserNotFoundException(id)
     }
 
     @EventListener(RoleEntryEvent::class)
@@ -80,7 +83,7 @@ class UserServiceImpl(
     }
 
     @EventListener(ContextRefreshedEvent::class)
-    fun handle(event: ContextRefreshedEvent) {
+    fun handle() {
         UserService.roles.onEach {
             publisher.publishEvent(
                 RoleEntryEvent(code = it)
