@@ -37,8 +37,9 @@ class UserServiceImpl(
     override fun users(
         probe: User, pageable: Pageable
     ): Page<User> = userRepository.findAll(
-        Example.of(
-            probe, ExampleMatcher.matching().withIgnoreNullValues()
+        Example.of(probe, ExampleMatcher.matching()
+                .withMatcher("username", ExampleMatcher.GenericPropertyMatcher.of(ExampleMatcher.StringMatcher.CONTAINING))
+                .withIgnoreNullValues()
         ), pageable
     )
 

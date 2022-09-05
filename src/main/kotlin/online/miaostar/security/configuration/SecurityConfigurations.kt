@@ -19,8 +19,12 @@ class SecurityConfigurations {
 
     @Bean
     fun auditor(): AuditorAware<User> = AuditorAware {
-        Optional.ofNullable(SecurityContextHolder.getContext()).map { it.authentication }.filter { it.isAuthenticated }
-            .map { it.principal }.filter { it is UserDetailsImpl }.map { it as UserDetailsImpl }
+        Optional.ofNullable(SecurityContextHolder.getContext())
+            .map { it.authentication }
+            .filter { it.isAuthenticated }
+            .map { it.principal }
+            .filter { it is UserDetailsImpl }
+            .map { it as UserDetailsImpl }
             .map { User(id = it.id) }
     }
 }
